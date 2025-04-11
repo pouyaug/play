@@ -3,29 +3,308 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تفاصيل اللعبة</title>
+  <title>موقع تحميل ألعاب</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    /* كل أنماط CSS السابقة تبقى كما هي */
-    /* ... */
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: #0b0b1f;
+      color: white;
+      min-height: 100vh;
+      padding: 30px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    .stars {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: transparent;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 2s infinite ease-in-out, moveStar 60s linear infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes moveStar {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(100vh); }
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.8rem;
+      margin-bottom: 30px;
+      color: #fff;
+      text-shadow: 0 0 5px #7e5bef, 0 0 10px #7e5bef, 0 0 20px #a48aff;
+    }
+
+    .search-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    input {
+      flex: 1;
+      padding: 14px;
+      border-radius: 10px;
+      border: none;
+      font-size: 1.1rem;
+      background-color: #1f1f2e;
+      color: white;
+      transition: 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      box-shadow: 0 0 10px #7e5bef;
+    }
+
+    .menu-btn {
+      background: black;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      border: 1px solid white;
+      transition: 0.3s;
+    }
+
+    .menu-btn:hover {
+      background-color: #1a1a1a;
+    }
+
+    .menu-btn div {
+      width: 25px;
+      height: 3px;
+      background: white;
+    }
+
+    .filter-buttons {
+      display: none;
+      justify-content: center;
+      gap: 15px;
+      margin: 15px 0 30px;
+      animation: fadeIn 0.5s ease;
+      flex-wrap: wrap;
+    }
+
+    .filter-buttons button {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 2px solid #7e5bef;
+      background: #1f1f2e;
+      color: #fff;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .filter-buttons button:hover {
+      background: #7e5bef;
+      color: white;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(-10px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    .games {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 15px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: 0.3s;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.5s forwards;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      border: 1px solid rgba(126, 91, 239, 0.5);
+    }
+
+    .card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 5px;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      opacity: 0.8;
+      margin-bottom: 8px;
+    }
+
+    .download-btn {
+      margin-top: 10px;
+      background: linear-gradient(to right, #7e5bef, #a48aff);
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+      width: 100%;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .download-btn:hover {
+      background: linear-gradient(to right, #a48aff, #7e5bef);
+      box-shadow: 0 0 15px rgba(126, 91, 239, 0.5);
+    }
+
+    .no-result {
+      text-align: center;
+      font-size: 1.2rem;
+      margin-top: 50px;
+      opacity: 0.8;
+      grid-column: 1/-1;
+    }
+
+    .error-message {
+      color: #ff4b2b;
+      text-align: center;
+      margin-top: 20px;
+      grid-column: 1/-1;
+    }
+
+    .update-notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #7e5bef;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      z-index: 1000;
+      box-shadow: 0 0 15px rgba(126, 91, 239, 0.5);
+      cursor: pointer;
+      animation: slideIn 0.5s forwards;
+      display: none;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .refresh-btn {
+      background: #7e5bef;
+      border: none;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 50px;
+      margin: 20px auto;
+      display: block;
+      cursor: pointer;
+      transition: 0.3s;
+      grid-column: 1/-1;
+    }
+
+    .refresh-btn:hover {
+      opacity: 0.9;
+    }
   </style>
 </head>
 <body>
+  <div class="stars" id="stars"></div>
+  <div class="update-notification" id="updateNotification">
+    <p>توجد تحديثات جديدة! <strong>اضغط هنا لتحديث الصفحة</strong></p>
+  </div>
+
   <div class="container">
-    <!-- باقي الواجهة تبقى كما هي -->
-    <!-- ... -->
+    <h1>موقع تحميل ألعاب</h1>
+    <div class="search-area">
+      <input type="text" id="searchInput" placeholder="دور على لعبتك هنا..." oninput="searchGames()">
+      <div class="menu-btn" onclick="toggleFilters()">
+        <div></div><div></div><div></div>
+      </div>
+    </div>
+
+    <div class="filter-buttons" id="filterButtons">
+      <button onclick="filterByPlatform('كمبيوتر')"><i class="fas fa-desktop"></i></button>
+      <button onclick="filterByPlatform('موبايل')"><i class="fas fa-mobile-alt"></i></button>
+      <button onclick="filterByPlatform('ايفون')"><i class="fab fa-apple"></i></button>
+    </div>
+
+    <div class="games" id="gamesContainer"></div>
+    <div class="no-result" id="noResult" style="display: none;">
+      للأسف يا باشا، اللعبة دي مش لاقيينها عندنا دلوقتي... جرب تدور على حاجة تانية؟
+    </div>
+    <div class="error-message" id="errorMessage" style="display: none;"></div>
+    <button onclick="location.reload()" class="refresh-btn">
+      <i class="fas fa-sync-alt"></i> تحديث القائمة
+    </button>
   </div>
 
   <script>
-    // دالة لفتح قاعدة البيانات - معدلة
+    const container = document.getElementById("gamesContainer");
+    const noResult = document.getElementById("noResult");
+    const filterButtons = document.getElementById("filterButtons");
+    const errorMessage = document.getElementById("errorMessage");
+    const updateNotification = document.getElementById("updateNotification");
+
+    // دالة لفتح قاعدة البيانات
     const openDB = () => {
       return new Promise((resolve, reject) => {
-        const request = indexedDB.open('GamesDatabase', 6); // إصدار 6
-        
-        request.onblocked = () => {
-          console.log('قاعدة البيانات مقفولة بواسطة تبويب آخر');
-          reject(new Error('قاعدة البيانات مقفولة'));
-        };
+        const request = indexedDB.open('GamesDatabase', 6);
         
         request.onupgradeneeded = (event) => {
           const db = event.target.result;
@@ -34,165 +313,165 @@
           }
         };
         
-        request.onsuccess = () => {
-          const db = request.result;
-          db.onversionchange = () => {
-            db.close();
-            alert('تم تحديث قاعدة البيانات. يرجى إعادة تحميل الصفحة.');
-          };
-          resolve(db);
-        };
-        
-        request.onerror = (event) => {
-          console.error('فشل فتح قاعدة البيانات:', event.target.error);
-          reject(event.target.error);
-        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
       });
     };
 
-    // دالة للحصول على لعبة بواسطة ID - معدلة
-    const getGameById = async (id) => {
+    // دالة لتحميل الألعاب من IndexedDB
+    const loadGamesFromDB = async () => {
       try {
         const db = await openDB();
         return new Promise((resolve, reject) => {
           const transaction = db.transaction('games', 'readonly');
           const store = transaction.objectStore('games');
+          const request = store.getAll();
           
-          // تحويل ID إلى رقم صحيح
-          const gameId = typeof id === 'string' ? parseInt(id) : id;
-          if (isNaN(gameId)) {
-            throw new Error('معرف اللعبة غير صالح');
-          }
-          
-          const request = store.get(gameId);
-          
-          request.onsuccess = () => {
-            if (request.result) {
-              resolve(request.result);
-            } else {
-              console.error('اللعبة غير موجودة في قاعدة البيانات');
-              resolve(null);
-            }
-          };
-          request.onerror = () => {
-            console.error('خطأ في الوصول إلى قاعدة البيانات:', request.error);
-            reject(request.error);
-          };
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error);
         });
       } catch (error) {
-        console.error('حدث خطأ جسيم:', error);
-        return null;
+        console.error('Error loading games:', error);
+        showError('حدث خطأ في تحميل الألعاب');
+        return [];
       }
     };
 
-    // تحميل بيانات اللعبة - معدلة
-    async function loadGame() {
+    // دالة لعرض الألعاب
+    async function renderGames(filteredGames) {
+      container.innerHTML = "";
+      errorMessage.style.display = "none";
+      
       try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const gameId = urlParams.get('id');
+        const games = await loadGamesFromDB();
+        let gamesToDisplay = games;
         
-        console.log('معرف اللعبة من URL:', gameId); // Debug
-        
-        if (!gameId) {
-          throw new Error('لم يتم تحديد معرف اللعبة في الرابط');
+        if (filteredGames && filteredGames.length > 0) {
+          gamesToDisplay = filteredGames;
         }
-
-        const game = await getGameById(gameId);
-        console.log('بيانات اللعبة المسترجعة:', game); // Debug
         
-        if (!game) {
-          throw new Error('اللعبة غير موجودة في قاعدة البيانات');
+        if (gamesToDisplay.length === 0) {
+          noResult.style.display = "block";
+          return;
         }
-
-        // عرض بيانات اللعبة
-        document.getElementById('gameTitle').textContent = game.title || "لعبة بدون عنوان";
-        document.getElementById('gameDescription').textContent = game.fullDesc || "لا يوجد وصف مفصل";
-        document.getElementById('gameCompany').textContent = game.company || "غير معروف";
-        document.getElementById('gameSize').textContent = game.size || "غير معروف";
-        document.getElementById('gamePlatform').textContent = game.platform || "غير معروف";
-        document.getElementById('gameOs').textContent = game.os || "غير معروف";
-        document.getElementById('gameBit').textContent = game.bit ? `${game.bit} بت` : "غير معروف";
-        document.getElementById('gameDevices').textContent = game.devices ? game.devices.join(', ') : "غير معروف";
-
-        // عرض الصور
-        const gallery = document.getElementById('gameGallery');
-        const images = game.images || {};
-        gallery.innerHTML = ''; // مسح الصور القديمة
         
-        if (game.image) gallery.innerHTML += `<img src="${game.image}" alt="الصورة الرئيسية">`;
-        if (images.img1) gallery.innerHTML += `<img src="${images.img1}" alt="صورة اللعبة 1">`;
-        if (images.img2) gallery.innerHTML += `<img src="${images.img2}" alt="صورة اللعبة 2">`;
-        if (images.img3) gallery.innerHTML += `<img src="${images.img3}" alt="صورة اللعبة 3">`;
-        if (images.img4) gallery.innerHTML += `<img src="${images.img4}" alt="صورة اللعبة 4">`;
-
-        // إعداد زر التحميل
-        const downloadBtn = document.getElementById('downloadBtn');
-        const countdownEl = document.getElementById('countdown');
-
-        if (game.downloadLink) {
-          downloadBtn.addEventListener('click', function() {
-            downloadBtn.disabled = true;
-            
-            let timeLeft = 5;
-            countdownEl.textContent = `جاري التجهيز للتحميل... ${timeLeft} ثانية`;
-            
-            const timer = setInterval(() => {
-              timeLeft--;
-              countdownEl.textContent = `جاري التجهيز للتحميل... ${timeLeft} ثانية`;
-              
-              if (timeLeft <= 0) {
-                clearInterval(timer);
-                let downloadLink = game.downloadLink;
-                if (!downloadLink.startsWith('http')) {
-                  downloadLink = 'https://' + downloadLink;
-                }
-                window.location.href = downloadLink;
-              }
-            }, 1000);
-          });
-        } else {
-          downloadBtn.disabled = true;
-          downloadBtn.innerHTML = '<i class="fas fa-exclamation-circle"></i> رابط التحميل غير متوفر';
-        }
+        noResult.style.display = "none";
+        
+        gamesToDisplay.forEach((game, index) => {
+          const card = document.createElement("div");
+          card.className = "card";
+          card.style.animationDelay = `${index * 0.1}s`;
+          
+          card.innerHTML = `
+            <img src="${game.image}" alt="${game.title}" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+            <h3>${game.title}</h3>
+            <p>${game.desc}</p>
+            <button class="download-btn" onclick="redirectToDownloadPage(${game.id})">
+              <i class="fas fa-download"></i> تحميل اللعبة
+            </button>
+          `;
+          
+          container.appendChild(card);
+        });
       } catch (error) {
-        console.error('حدث خطأ في تحميل اللعبة:', error);
-        showError();
+        showError('حدث خطأ في عرض الألعاب');
+        console.error('Error rendering games:', error);
       }
     }
 
-    // دالة عرض الخطأ - معدلة
-    function showError() {
-      document.querySelector('.container').innerHTML = `
-        <div style="text-align: center; margin-top: 50px;">
-          <h2 style="color: #ff4b2b; font-size: 2rem;">اللعبة غير موجودة</h2>
-          <p style="font-size: 1.2rem; margin: 20px 0;">
-            عذراً، اللعبة التي تبحث عنها غير متوفرة أو تم حذفها
-          </p>
-          <div style="margin-top: 30px;">
-            <a href="https://pouyaug.github.io/dowlonplay/" 
-               style="display: inline-block; padding: 12px 25px; 
-                      background: #7e5bef; color: white; 
-                      border-radius: 8px; text-decoration: none;
-                      font-size: 1.1rem; margin: 10px;">
-              <i class="fas fa-arrow-left"></i> العودة للصفحة الرئيسية
-            </a>
-            <a href="https://pouyaug.github.io/dowlonplay/" 
-               style="display: inline-block; padding: 12px 25px; 
-                      background: #2e2e42; color: white; 
-                      border-radius: 8px; text-decoration: none;
-                      font-size: 1.1rem; margin: 10px;">
-              <i class="fas fa-gamepad"></i> تصفح الألعاب الأخرى
-            </a>
-          </div>
-          <div style="margin-top: 30px; color: #aaa; font-size: 0.9rem;">
-            <p>رمز الخطأ: GAME_NOT_FOUND</p>
-          </div>
-        </div>
-      `;
+    // التوجيه لصفحة التحميل مع معرف اللعبة
+    function redirectToDownloadPage(gameId) {
+      window.location.href = `https://pouyaug.github.io/play/?id=${gameId}`;
     }
 
-    // تحميل اللعبة عند بدء الصفحة
-    loadGame();
+    async function searchGames() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      try {
+        const games = await loadGamesFromDB();
+        const results = games.filter(game => 
+          game.title && game.title.toLowerCase().includes(query)
+        );
+        renderGames(results);
+      } catch (error) {
+        showError('حدث خطأ أثناء البحث');
+      }
+    }
+
+    async function filterByPlatform(platform) {
+      document.getElementById("searchInput").value = "";
+      try {
+        const games = await loadGamesFromDB();
+        const results = games.filter(game => 
+          game.platform && game.platform === platform
+        );
+        renderGames(results);
+      } catch (error) {
+        showError('حدث خطأ أثناء التصفية');
+      }
+    }
+
+    function toggleFilters() {
+      filterButtons.style.display = filterButtons.style.display === "flex" ? "none" : "flex";
+    }
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.style.display = "block";
+    }
+
+    // نظام التحديث التلقائي
+    function setupAutoRefresh() {
+      // الطريقة 1: BroadcastChannel
+      if ('BroadcastChannel' in window) {
+        const channel = new BroadcastChannel('games_updates');
+        channel.addEventListener('message', (event) => {
+          if (event.data.type === 'GAMES_UPDATED') {
+            showUpdateNotification();
+          }
+        });
+      }
+      
+      // الطريقة 2: localStorage
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'games_updated') {
+          showUpdateNotification();
+        }
+      });
+    }
+
+    // إظهار إشعار التحديث
+    function showUpdateNotification() {
+      updateNotification.style.display = 'block';
+      updateNotification.onclick = () => {
+        location.reload();
+        updateNotification.style.display = 'none';
+      };
+      
+      // إخفاء الإشعار بعد 10 ثواني
+      setTimeout(() => {
+        updateNotification.style.display = 'none';
+      }, 10000);
+    }
+
+    // نجوم الخلفية
+    const starsContainer = document.getElementById("stars");
+    const numStars = 100;
+
+    for (let i = 0; i < numStars; i++) {
+      const star = document.createElement("div");
+      star.className = "star";
+      star.style.top = Math.random() * 100 + "%";
+      star.style.left = Math.random() * 100 + "%";
+      star.style.animationDelay = (Math.random() * 5) + "s";
+      star.style.opacity = Math.random() * 0.8 + 0.2;
+      starsContainer.appendChild(star);
+    }
+
+    // تفعيل نظام التحديث التلقائي
+    setupAutoRefresh();
+
+    // تحميل الألعاب عند بدء التشغيل
+    renderGames();
   </script>
 </body>
 </html>
